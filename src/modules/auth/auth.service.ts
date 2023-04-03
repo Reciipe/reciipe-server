@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Auth, AuthDocument } from './entities/auth.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectModel(Auth.name)
+    private authModel: Model<AuthDocument>,
+  ) {}
+
+  async create(authDto: CreateAuthDto): Promise<Auth> {
+    try {
+      const account = new this.authModel({ ...authDto });
+      const auth = await account.save();
+      return auth;
+    } catch (error) {
+      throw new Error(
+        `Error creating auth for user, from create method in auth.service.ts. 
+        \nWith error message: ${error.message}`,
+      );
+    }
   }
 
   findAll() {

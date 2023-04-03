@@ -1,9 +1,21 @@
-import { Prop, SchemaFactory, raw } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { User } from 'src/modules/user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UserAccount } from 'src/modules/user_account/entities/user_account.entity';
 
+export type AuthDocument = Auth & Document;
+
+@Schema({
+  timestamps: true,
+  autoCreate: true,
+  toObject: {
+    virtuals: true,
+  },
+  toJSON: {
+    virtuals: true,
+  },
+})
 export class Auth {
   @Prop({
     type: String,
@@ -51,15 +63,10 @@ export class Auth {
 
   @Prop({
     type: Types.ObjectId,
-    ref: 'User',
-  })
-  user: any | User;
-
-  @Prop({
-    type: Types.ObjectId,
     ref: 'Auth',
+    required: true,
   })
-  account: any | UserAccount;
+  userAccountId: any | UserAccount;
 
   @Prop({
     type: Boolean,

@@ -5,11 +5,7 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { UserAccountModule } from './modules/user_account/user_account.module';
 import { DatabseModule } from './modules/database/database.module';
-import { CategoryModule } from './modules/category/category.module';
-import { BusinessModule } from './modules/business/business.module';
-import { CountryModule } from './modules/country/country.module';
-import { ContinentModule } from './modules/continent/continent.module';
-import { ReviewsModule } from './modules/reviews/reviews.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,11 +16,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
     DatabseModule,
     UserModule,
     UserAccountModule,
-    BusinessModule,
-    CategoryModule,
-    CountryModule,
-    ContinentModule,
-    ReviewsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

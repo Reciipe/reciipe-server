@@ -16,12 +16,15 @@ import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserAccountService } from '../user_account/user_account.service';
 import { CreateUserAccountDto } from '../user_account/dto/create-user_account.dto';
+import { AuthService } from '../auth/auth.service';
+import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 
 @Controller('user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly userAccountService: UserAccountService,
+    private readonly authService: AuthService,
   ) {}
 
   /**
@@ -30,17 +33,6 @@ export class UserController {
    * @returns {*}
    */
   @Post('register')
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'The user has been successfully registered.',
-    schema: {
-      properties: {
-        success: { type: 'boolean' },
-        message: { type: 'string' },
-        user: { type: 'object' },
-      },
-    },
-  })
   async create(
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,
@@ -68,10 +60,18 @@ export class UserController {
 
       // pass response from request and created user id to account service
       const userAccountDto = new CreateUserAccountDto();
+      // this assigns the applicable properties from {_id: userID, ...createUserDto} to userAccountDto
       Object.assign(userAccountDto, { _id: userID, ...createUserDto });
 
       // create user account
       const account = await this.userAccountService.create(userAccountDto);
+
+      // get the required fields and assign to userAuthDto
+      const createAuthDto = new CreateAuthDto();
+      // pass in required fields to createAuthDto
+      Object.assign(createAuthDto, createUserDto);
+      // call to user authentication service
+      const auth = await this.authService.create(createAuthDto);
 
       return res.status(HttpStatus.CREATED).json({
         success: true,
