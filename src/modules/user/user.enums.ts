@@ -1,4 +1,4 @@
 export enum UserProfile {
-  MERCHANT = 'merchant',
-  CUSTOMER = 'customer',
+  FOODIE = 'foodie',
+  CREATOR = 'creator',
 }

@@ -1,12 +1,12 @@
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, Prop, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Auth } from 'src/modules/auth/entities/auth.entity';
-import { Merchant } from './merchant.entity';
-import { Customer } from './customer.entity';
+import { Creator } from './creator.entity';
+import { Foodie } from './foodie.entity';
 import { UserProfile } from 'src/modules/user/user.enums';
 
 export type UserDocument = User & Document;
-export type Profile = Customer | Merchant;
+export type Profile = Foodie | Creator;
 
 @Schema({
   timestamps: true,
@@ -15,28 +15,22 @@ export type Profile = Customer | Merchant;
   toJSON: { virtuals: true },
 })
 export class User {
-  @Prop({
-    type: Types.ObjectId,
-    default: null,
-    required: false,
-    ref: 'Auth',
-  })
-  auth: string | Auth;
-
-  @Prop({
-    type: Types.ObjectId,
-    required: true,
-    refpath: 'profileType',
-  })
-  profile: Profile;
-
-  @Prop({
-    type: String,
-    required: true,
-    enum: Object.values(UserProfile),
-    default: 'Customer',
-  })
-  profileType: string;
+  @Prop(
+    raw({
+      profileId: {
+        type: Types.ObjectId,
+        required: true,
+        refPath: 'profileType',
+      },
+      profileType: {
+        type: String,
+        required: true,
+        enum: Object.values(UserProfile),
+        default: 'foodie',
+      },
+    }),
+  )
+  profile: { profileId: string | Foodie | Creator; profileType: string };
 
   @Prop({
     type: Boolean,
