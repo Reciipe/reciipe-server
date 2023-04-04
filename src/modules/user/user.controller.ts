@@ -69,7 +69,8 @@ export class UserController {
       // get the required fields and assign to userAuthDto
       const createAuthDto = new CreateAuthDto();
       // pass in required fields to createAuthDto
-      Object.assign(createAuthDto, createUserDto);
+      Object.assign(createAuthDto, { userAccountId: userID, ...createUserDto });
+
       // call to user authentication service
       const auth = await this.authService.create(createAuthDto);
 

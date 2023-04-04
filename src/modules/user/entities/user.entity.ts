@@ -15,17 +15,13 @@ export type Profile = Foodie | Creator;
   toJSON: { virtuals: true },
 })
 export class User {
-  @Prop({
-    type: Types.ObjectId,
-    default: null,
-    required: false,
-    ref: 'Auth',
-  })
-  auth: string | Auth;
-
   @Prop(
     raw({
-      profile: { type: Types.ObjectId, required: true, refPath: 'profileType' },
+      profileId: {
+        type: Types.ObjectId,
+        required: true,
+        refPath: 'profileType',
+      },
       profileType: {
         type: String,
         required: true,
@@ -34,7 +30,7 @@ export class User {
       },
     }),
   )
-  profile: { profile: string | Foodie | Creator; profileType: string };
+  profile: { profileId: string | Foodie | Creator; profileType: string };
 
   @Prop({
     type: Boolean,

@@ -9,6 +9,10 @@ import { Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAuthDto {
+  @IsNotEmpty()
+  @IsString()
+  userAccountId: Types.ObjectId | any;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -69,11 +73,4 @@ export class CreateAuthDto {
     default: false,
   })
   change_password: boolean;
-
-  @ApiProperty({
-    example: '614b794d1e81c02a4a4c3456',
-    description: 'The userAccountId of the user associated with the account.',
-    required: false,
-  })
-  userAccountId: Types.ObjectId | any;
 }

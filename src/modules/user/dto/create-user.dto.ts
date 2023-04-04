@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { merchantDto } from './merchant.dto';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PersonDTO } from './person.dto';
+import { ProfileDto } from 'src/common/dto/profile.dto';
+import { Types } from 'mongoose';
 
 /**
  * Generic DTO
@@ -9,11 +9,5 @@ import { PersonDTO } from './person.dto';
  */
 export class CreateUserDto extends PersonDTO {
   @IsNotEmpty()
-  @IsString()
-  password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty({ example: 'merchant' })
-  profileType: string;
+  profile: ProfileDto;
 }

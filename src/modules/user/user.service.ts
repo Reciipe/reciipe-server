@@ -27,7 +27,9 @@ export class UserService {
   async create(userDTO: CreateUserDto): Promise<any> {
     try {
       // get passed in profile type
-      const { email, password, profileType = 'customer' } = userDTO;
+      const { profile } = userDTO;
+      // console.log(profile);
+      const { profileType } = profile;
 
       const ProfileModel =
         profileType === UserProfile.CREATOR
@@ -35,23 +37,22 @@ export class UserService {
           : this.foodieModel;
 
       // create either merchant or customer object, and set the id to the user account id and save to DB
-      let profile = new ProfileModel({ ...userDTO });
-      profile = await profile.save();
+      let newProfile = new ProfileModel({ ...userDTO });
+      newProfile = await newProfile.save();
+      // console.log(newProfile);
 
       // create user object and save to DB
       let user = new this.userModel({
-        email,
-        password,
-        profileType,
-        profile,
+        profile: { profileId: newProfile._id, profileType: profileType },
       });
+      // console.log('reachabel');
 
       user = await user.save();
       return user;
     } catch (error) {
       throw new Error(
         `Error registering user with request DTO ${userDTO}, 
-        \nfrom create method in user_account.service.ts. 
+        \nfrom create method in user.service.ts. 
         \nWith error message: ${error.message}`,
       );
     }

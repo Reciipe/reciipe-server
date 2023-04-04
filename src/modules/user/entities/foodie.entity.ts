@@ -16,7 +16,7 @@ export type FoodieDocument = Foodie & Document;
 export class Foodie extends ProfileType {
   @Prop({
     type: String,
-    required: true,
+    required: false,
   })
   dietType: string;
 }
