@@ -40,4 +40,13 @@ export class AuthService {
   remove(id: number) {
     return `This action removes a #${id} auth`;
   }
+
+  async signIn(username: string, pass: string): Promise<any> {
+    // query user account by email, if found, add the necessary user info to the return object
+    // nowcheck for the id of that user and use it to match the auth account
+    // if the passed in password matches the password in the auth account, add the hashed password to the return object
+    // use the id of that same user to pull saved recipes and add them to the return object
+    // Generate the JWT and add it to the return object
+    return;
+  }
 }

@@ -3,20 +3,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './entities/user.entity';
 import { UserProfile } from './user.enums';
-import { Merchant, MerchantDocument } from './entities/merchant.entity';
+import { Creator, CreatorDocument } from './entities/creator.entity';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Customer, CustomerDocument } from './entities/customer.entity';
+import { Foodie, FoodieDocument } from './entities/foodie.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     protected userModel: Model<UserDocument> & any,
-    @InjectModel(Merchant.name)
-    public readonly merchantModel: Model<MerchantDocument>,
-    @InjectModel(Customer.name)
-    public readonly customerModel: Model<CustomerDocument>,
+    @InjectModel(Creator.name)
+    public readonly creatorModel: Model<CreatorDocument>,
+    @InjectModel(Foodie.name)
+    public readonly foodieModel: Model<FoodieDocument>,
   ) {}
 
   /**
@@ -30,9 +30,9 @@ export class UserService {
       const { email, password, profileType = 'customer' } = userDTO;
 
       const ProfileModel =
-        profileType === UserProfile.MERCHANT
-          ? this.merchantModel
-          : this.customerModel;
+        profileType === UserProfile.CREATOR
+          ? this.creatorModel
+          : this.foodieModel;
 
       // create either merchant or customer object, and set the id to the user account id and save to DB
       let profile = new ProfileModel({ ...userDTO });

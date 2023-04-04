@@ -7,19 +7,18 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { AddressDto } from 'src/common/dto/address.dto';
 import { MobileDto } from 'src/common/dto/mobile.dto';
 
 /**
  * Contains all the string fields in person.entity.class
  */
 export class PersonDTO {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({ description: 'The first name of the person' })
   firstName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({ description: 'The last name of the person' })
   lastName: string;
@@ -28,21 +27,6 @@ export class PersonDTO {
   @IsEmail()
   @ApiProperty({ description: 'The email address of the person' })
   email: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => AddressDto)
-  @ApiProperty({
-    description: 'The address of the person',
-    example: {
-      unit: '123',
-      street: 'Main St',
-      city: 'Toronto',
-      province: 'ON',
-      country: 'CA',
-    },
-  })
-  address: AddressDto;
 
   @IsOptional()
   @ValidateNested()

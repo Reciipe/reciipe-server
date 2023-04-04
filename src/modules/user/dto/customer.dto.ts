@@ -1,3 +1,3 @@
 import { PersonDTO } from './person.dto';
 
-export class CustomerDto extends PersonDTO {}
+export class FoodieDto extends PersonDTO {}

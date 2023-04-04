@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { Customer, CustomerSchema } from './entities/customer.entity';
+import { Foodie, FoodieSchema } from './entities/foodie.entity';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Merchant, MerchantSchema } from './entities/merchant.entity';
+import { Creator, CreatorSchema } from './entities/creator.entity';
 import { User, UserSchema } from './entities/user.entity';
 import { UserAccountService } from '../user_account/user_account.service';
 import {
@@ -17,8 +17,8 @@ import { Auth, AuthSchema } from '../auth/entities/auth.entity';
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: Customer.name, schema: CustomerSchema },
-      { name: Merchant.name, schema: MerchantSchema },
+      { name: Foodie.name, schema: FoodieSchema },
+      { name: Creator.name, schema: CreatorSchema },
       { name: UserAccount.name, schema: UserAccountSchema },
       { name: Auth.name, schema: AuthSchema },
     ]),

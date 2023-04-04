@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ProfileType } from './person.entity';
 
-export type MerchantDocument = Merchant & Document;
+export type CreatorDocument = Creator & Document;
 
 @Schema({
   timestamps: true,
@@ -13,7 +13,7 @@ export type MerchantDocument = Merchant & Document;
     virtuals: true,
   },
 })
-export class Merchant extends ProfileType {
+export class Creator extends ProfileType {
   private age: number;
 
   /**
@@ -30,6 +30,12 @@ export class Merchant extends ProfileType {
     required: false,
   })
   profilePicture: string;
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  bio: string;
 
   /**
    *
@@ -72,13 +78,13 @@ export class Merchant extends ProfileType {
   }
 }
 
-const MerchantSchema = SchemaFactory.createForClass(Merchant);
+const CreatorSchema = SchemaFactory.createForClass(Creator);
 
-MerchantSchema.statics.config = () => {
+CreatorSchema.statics.config = () => {
   return {
-    idToken: 'merch',
+    idToken: 'creator',
     hiddenFields: ['deleted'],
   };
 };
 
-export { MerchantSchema };
+export { CreatorSchema };
