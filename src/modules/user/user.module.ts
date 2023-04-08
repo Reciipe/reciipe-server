@@ -12,9 +12,13 @@ import {
 } from '../user_account/entities/user_account.entity';
 import { AuthService } from '../auth/auth.service';
 import { Auth, AuthSchema } from '../auth/entities/auth.entity';
-
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
+    JwtModule.register({
+      secret: 'yourSecretKey',
+      signOptions: { expiresIn: '1d' },
+    }),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Foodie.name, schema: FoodieSchema },
@@ -24,6 +28,6 @@ import { Auth, AuthSchema } from '../auth/entities/auth.entity';
     ]),
   ],
   controllers: [UserController],
-  providers: [UserService, UserAccountService, AuthService],
+  providers: [UserService, UserAccountService, AuthService, JwtModule],
 })
 export class UserModule {}

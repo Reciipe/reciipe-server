@@ -19,7 +19,6 @@ export class Auth {
   @Prop({
     type: String,
     required: true,
-    select: false,
   })
   public password: string;
 
@@ -99,7 +98,6 @@ AuthSchema.statics.config = () => {
       'password_reset_code',
     ],
     hiddenFields: [
-      'password',
       'deleted',
       'verify_code_expiration',
       'verification_code',

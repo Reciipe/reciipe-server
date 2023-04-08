@@ -9,14 +9,16 @@ import {
   UserAccount,
   UserAccountDocument,
 } from '../user_account/entities/user_account.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Auth.name)
-    public authModel: Model<AuthDocument> & any,
+    private authModel: Model<AuthDocument> & any,
     @InjectModel(UserAccount.name)
-    public readonly userAccountModel: Model<UserAccountDocument>,
+    private readonly userAccountModel: Model<UserAccountDocument>,
+    private readonly jwtService: JwtService,
   ) {}
 
   /**
@@ -74,20 +76,24 @@ export class AuthService {
    * @returns {*} - the user info, the hashed password, the saved recipes and the JWT
    * @memberof AuthService
    */
-  async signIn(email: string, password: string): Promise<any> {
+  async login(email: string, password: string): Promise<any> {
     try {
-      // find the user account
+      // retrieve the user account
       const userAccount = await this.userAccountModel.findOne({
         email: email,
       });
+
+      // user account exists
       if (userAccount) {
         // retrieve the auth account for the user
         const userAuthAccount = await this.authModel.findOne({
-          userAccountId: userAccount._id,
+          userAccountId: userAccount.id,
         });
 
+        // auth account does not exist
         if (!userAuthAccount) {
           return {
+            success: false,
             message: 'user auth account does not exist',
           };
         }
@@ -97,30 +103,35 @@ export class AuthService {
           password,
           userAuthAccount.password,
         );
+
+        // password matches
         if (passwordMatch) {
-          const savedRecipes = null,
-            token = null;
           // get the saved recipes for the user
+          const savedRecipes = [];
           // const savedRecipes = await this.savedRecipeService.findSavedRecipes(
           //   user.id,
           // );
-          // const token = await this.jwtService.signAsync({
-          //   userId: user.id,
-          //   email: user.email,
-          //   role: user.role,
-          // });
+
+          // create token
+          const token = await this.signToken({ userId: userAccount.id });
+
+          // return response
           return {
+            message: 'login successful',
+            success: true,
             account: userAccount,
             savedRecipes: savedRecipes,
             token: token,
           };
         } else {
           return {
+            success: false,
             message: 'password does not match',
           };
         }
       } else {
         return {
+          success: false,
           message: 'user account does not exist',
         };
       }
@@ -130,6 +141,10 @@ export class AuthService {
         \nWith error message: ${error.message}`,
       );
     }
-    return;
+  }
+
+  async signToken(payload: any): Promise<string> {
+    const token = await this.jwtService.signAsync(payload);
+    return token;
   }
 }

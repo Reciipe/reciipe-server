@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -42,7 +45,24 @@ export class AuthController {
   }
 
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
+    try {
+      const data = await this.authService.login(
+        signInDto.email,
+        signInDto.password,
+      );
+
+      // if the user is not found
+      if (!data.success) {
+        return res.status(HttpStatus.NOT_FOUND).json(data);
+      }
+
+      return res.status(HttpStatus.CONFLICT).json(data);
+    } catch (error) {
+      throw new Error(
+        `Error signing in user, from signIn method in auth.controller.ts. 
+        \nWith error message: ${error.message}`,
+      );
+    }
   }
 }
