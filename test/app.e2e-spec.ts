@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('UserController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,10 +15,49 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('should create a new user', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .post('/users')
+      .send({
+        name: 'John',
+        email: 'john@example.com',
+        password: 'password',
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.id).toBeDefined();
+        expect(body.name).toEqual('John');
+        expect(body.email).toEqual('john@example.com');
+      });
+  });
+
+  it('should get a user by id', () => {
+    return request(app.getHttpServer())
+      .get('/users/1')
       .expect(200)
-      .expect('Hello World!');
+      .expect(({ body }) => {
+        expect(body.id).toEqual(1);
+        expect(body.name).toEqual('John');
+        expect(body.email).toEqual('john@example.com');
+      });
+  });
+
+  it('should update a user', () => {
+    return request(app.getHttpServer())
+      .put('/users/1')
+      .send({
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.id).toEqual(1);
+        expect(body.name).toEqual('John Doe');
+        expect(body.email).toEqual('johndoe@example.com');
+      });
+  });
+
+  it('should delete a user', () => {
+    return request(app.getHttpServer()).delete('/users/1').expect(200);
   });
 });
