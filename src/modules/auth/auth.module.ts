@@ -8,8 +8,8 @@ import {
   UserAccount,
   UserAccountSchema,
 } from '../user_account/entities/user_account.entity';
-import { JwtUtils } from 'src/common/functions/jwtUtils';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -17,12 +17,15 @@ import { JwtModule } from '@nestjs/jwt';
       { name: Auth.name, schema: AuthSchema },
       { name: UserAccount.name, schema: UserAccountSchema },
     ]),
-    JwtModule.register({
-      secret: 'yourSecretKey',
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserAccountService, JwtUtils, JwtModule],
+  providers: [AuthService, UserAccountService, JwtModule],
 })
 export class AuthModule {}
