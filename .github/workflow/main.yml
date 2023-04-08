@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.4.2
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build the app
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Deploy to production
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+          JWT_SECRET: ${{ secrets.TOKEN_SECRET }}
+        run: yarn deploy
