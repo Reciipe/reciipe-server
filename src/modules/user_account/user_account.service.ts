@@ -12,7 +12,7 @@ import {
 export class UserAccountService {
   constructor(
     @InjectModel(UserAccount.name)
-    private userAccountModel: Model<UserAccountDocument>,
+    public userAccountModel: Model<UserAccountDocument>,
   ) {}
 
   async create(userAccountDto: CreateUserAccountDto): Promise<UserAccount> {
