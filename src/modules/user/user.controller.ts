@@ -19,7 +19,7 @@ import { CreateUserAccountDto } from '../user_account/dto/create-user_account.dt
 import { AuthService } from '../auth/auth.service';
 import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     public readonly userService: UserService,
