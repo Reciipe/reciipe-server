@@ -22,9 +22,9 @@ import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 @Controller('user')
 export class UserController {
   constructor(
-    private readonly userService: UserService,
-    private readonly userAccountService: UserAccountService,
-    private readonly authService: AuthService,
+    public readonly userService: UserService,
+    public readonly userAccountService: UserAccountService,
+    public readonly authService: AuthService,
   ) {}
 
   /**
@@ -52,34 +52,38 @@ export class UserController {
           account: '',
           user: userExists,
         });
+      } else {
+        // create the user(customer/merchant) and pass the user account id
+        const user = await this.userService.create(createUserDto);
+        const userID = user.id;
+
+        // pass response from request and created user id to account service
+        const userAccountDto = new CreateUserAccountDto();
+        // this assigns the applicable properties from {_id: userID, ...createUserDto} to userAccountDto
+        Object.assign(userAccountDto, { _id: userID, ...createUserDto });
+
+        // create user account
+        const account = await this.userAccountService.create(userAccountDto);
+
+        // get the required fields and assign to userAuthDto
+        const createAuthDto = new CreateAuthDto();
+        // pass in required fields to createAuthDto
+        Object.assign(createAuthDto, {
+          userAccountId: userID,
+          ...createUserDto,
+        });
+
+        // call to user authentication service, retrieve token back
+        const token = await this.authService.create(createAuthDto);
+
+        return res.status(HttpStatus.CREATED).json({
+          success: true,
+          message: 'user successfully registered',
+          token: token,
+          account: account,
+          user: user,
+        });
       }
-
-      // create the user(customer/merchant) and pass the user account id
-      const user = await this.userService.create(createUserDto);
-      const userID = user.id;
-
-      // pass response from request and created user id to account service
-      const userAccountDto = new CreateUserAccountDto();
-      // this assigns the applicable properties from {_id: userID, ...createUserDto} to userAccountDto
-      Object.assign(userAccountDto, { _id: userID, ...createUserDto });
-
-      // create user account
-      const account = await this.userAccountService.create(userAccountDto);
-
-      // get the required fields and assign to userAuthDto
-      const createAuthDto = new CreateAuthDto();
-      // pass in required fields to createAuthDto
-      Object.assign(createAuthDto, { userAccountId: userID, ...createUserDto });
-
-      // call to user authentication service
-      const auth = await this.authService.create(createAuthDto);
-
-      return res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: 'user successfully registered',
-        account: account,
-        user: user,
-      });
     } catch (err) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,

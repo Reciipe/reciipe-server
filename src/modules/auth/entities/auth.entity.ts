@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { User } from 'src/modules/user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UserAccount } from 'src/modules/user_account/entities/user_account.entity';
 
@@ -20,7 +19,6 @@ export class Auth {
   @Prop({
     type: String,
     required: true,
-    select: false,
   })
   public password: string;
 
@@ -100,7 +98,6 @@ AuthSchema.statics.config = () => {
       'password_reset_code',
     ],
     hiddenFields: [
-      'password',
       'deleted',
       'verify_code_expiration',
       'verification_code',
